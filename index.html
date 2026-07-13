@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grade 5 Maths · Mode &amp; the Shape of Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8FC;
+    --grid:#E1E8F2;
+    --grid-strong:#CFDAEC;
+    --ink:#18233F;
+    --ink-soft:#5A6783;
+    --ink-faint:#8A95AD;
+    --accent:#4F46E5;        /* interactive / primary */
+    --accent-soft:#EAE9FF;
+    --mode:#DB2777;          /* the "winner" bar / mode highlight */
+    --mode-soft:#FCE7F1;
+    --tail:#0EA5E9;          /* skew tail */
+    --bar:#A9B6D8;           /* default bar */
+    --bar-deep:#7C8BC0;
+    --green:#16A34A; --green-bg:#E7F6EC; --green-line:#B7E4C6;
+    --amber:#D97706; --amber-bg:#FCF1E1; --amber-line:#F3D9AE;
+    --red:#DC2626;   --red-bg:#FBEAEA;   --red-line:#F2C2C2;
+    --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(24,35,63,.05), 0 10px 30px -18px rgba(24,35,63,.25);
+    --radius:18px;
+    --maxw:1020px;
+    --display:'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+    --body:'Nunito', system-ui, -apple-system, sans-serif;
+    --mono:'Space Mono', ui-monospace, 'Courier New', monospace;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); font-family:var(--body);
+    font-size:17px; line-height:1.6;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  body.students .teacher-note{display:none !important}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+
+  /* ---------- top bar ---------- */
+  header.bar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(246,248,252,.88); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--grid-strong);
+  }
+  .bar-inner{max-width:var(--maxw); margin:0 auto; padding:10px 20px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:.2px;
+    display:flex; align-items:center; gap:9px; margin-right:auto}
+  .brand .glyph{display:inline-grid; grid-template-columns:repeat(3,5px); gap:2px; align-items:end; height:18px}
+  .brand .glyph i{background:var(--accent); border-radius:1px; display:block; width:5px}
+  .brand .glyph i:nth-child(1){height:7px;background:var(--bar-deep)}
+  .brand .glyph i:nth-child(2){height:16px;background:var(--mode)}
+  .brand .glyph i:nth-child(3){height:11px;background:var(--bar-deep)}
+  nav.jump{display:flex; gap:4px; flex-wrap:wrap}
+  nav.jump a{font-family:var(--display); font-weight:500; font-size:.82rem; text-decoration:none;
+    color:var(--ink-soft); padding:6px 10px; border-radius:999px}
+  nav.jump a:hover{color:var(--ink); background:var(--accent-soft)}
+  .tview{font-family:var(--display); font-weight:600; font-size:.8rem; cursor:pointer;
+    border:1.5px solid var(--accent); color:var(--accent); background:transparent;
+    padding:6px 13px; border-radius:999px; display:inline-flex; align-items:center; gap:7px}
+  .tview .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  body.students .tview{border-color:var(--ink-faint); color:var(--ink-soft)}
+  body.students .tview .dot{background:var(--ink-faint)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:54px 0 30px}
+  .eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); font-weight:700}
+  .hero h1{font-family:var(--display); font-weight:700; line-height:1.02;
+    font-size:clamp(2.3rem,6vw,4.2rem); margin:.25em 0 .15em; letter-spacing:-.5px}
+  .hero h1 .pink{color:var(--mode)} .hero h1 .blue{color:var(--tail)}
+  .walt{display:inline-block; background:var(--ink); color:#fff; font-family:var(--display);
+    font-weight:500; padding:10px 16px; border-radius:12px; margin-top:8px; font-size:1.02rem}
+  .walt b{color:#FFD24A; font-weight:700}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:30px; align-items:end; margin-top:26px}
+  @media(max-width:760px){.hero-grid{grid-template-columns:1fr}}
+  .hero-chart{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:14px 16px 8px}
+  .hero-chart .cap{font-family:var(--mono); font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.12em}
+
+  /* ---------- sections ---------- */
+  section{padding:38px 0; scroll-margin-top:64px}
+  .part-tag{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.72rem;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:6px}
+  .part-tag::before{content:""; width:22px; height:2px; background:var(--accent); display:inline-block}
+  h2{font-family:var(--display); font-weight:700; font-size:clamp(1.7rem,3.5vw,2.5rem);
+    margin:.1em 0 .35em; letter-spacing:-.3px; line-height:1.08}
+  h3{font-family:var(--display); font-weight:600; font-size:1.25rem; margin:0 0 .4em}
+  .lead{font-size:1.08rem; color:var(--ink-soft); max-width:60ch; margin:.2em 0 1.2em}
+
+  .card{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:24px}
+  .card + .card{margin-top:18px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+
+  .keyword{color:var(--mode); font-weight:800}
+  .define{background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:10px;
+    padding:14px 16px; font-size:1.05rem}
+  .define b{color:var(--accent)}
+
+  /* steps */
+  ol.steps{counter-reset:s; list-style:none; padding:0; margin:14px 0 0; display:grid; gap:10px}
+  ol.steps li{counter-increment:s; display:flex; gap:12px; align-items:flex-start}
+  ol.steps li::before{content:counter(s); flex:0 0 auto; width:28px; height:28px; border-radius:8px;
+    background:var(--accent); color:#fff; font-family:var(--display); font-weight:700;
+    display:grid; place-items:center; font-size:.95rem}
+
+  /* ---------- mode counter (interactive list) ---------- */
+  .counter h3{margin-bottom:2px}
+  .hint{font-size:.9rem; color:var(--ink-faint); margin:0 0 14px}
+  .digits{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 4px}
+  .digit{font-family:var(--mono); font-weight:700; font-size:1.45rem;
+    width:52px; height:52px; border-radius:12px; border:2px solid var(--grid-strong);
+    background:#fff; color:var(--ink); cursor:pointer; transition:transform .12s, background .15s, border-color .15s, color .15s}
+  .digit:hover{transform:translateY(-2px)}
+  .digit.lit{background:var(--mode); border-color:var(--mode); color:#fff; box-shadow:0 6px 16px -8px var(--mode)}
+  .digit.dim{opacity:.4}
+  .tallybar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:14px; min-height:30px;
+    font-family:var(--body); font-weight:700; color:var(--ink-soft)}
+  .tally{background:var(--paper); border:1px solid var(--grid-strong); border-radius:999px;
+    padding:4px 12px; font-size:.9rem; display:inline-flex; gap:7px; align-items:center}
+  .tally b{color:var(--mode)}
+  .verdict{margin-top:14px; font-family:var(--display); font-weight:600; font-size:1.1rem; min-height:1.6em}
+  .verdict.show{color:var(--mode)}
+
+  /* buttons */
+  .btn{font-family:var(--display); font-weight:600; font-size:.9rem; cursor:pointer; border-radius:10px;
+    padding:9px 16px; border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+    transition:transform .1s, filter .15s}
+  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--accent)}
+  .btn.sm{font-size:.82rem; padding:7px 13px}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+
+  /* toggle group */
+  .seg{display:inline-flex; background:var(--paper); border:1px solid var(--grid-strong);
+    border-radius:12px; padding:4px; gap:4px; flex-wrap:wrap}
+  .seg button{font-family:var(--display); font-weight:600; font-size:.88rem; border:0; background:transparent;
+    color:var(--ink-soft); padding:8px 14px; border-radius:9px; cursor:pointer}
+  .seg button.on{background:#fff; color:var(--ink); box-shadow:var(--shadow)}
+  .seg button[data-shape="pos"].on{color:var(--mode)}
+  .seg button[data-shape="neg"].on{color:var(--tail)}
+
+  .explorer-read{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px}
+  @media(max-width:720px){.explorer-read{grid-template-columns:1fr 1fr}}
+  .readout{background:var(--paper); border:1px solid var(--grid-strong); border-radius:12px; padding:12px 14px}
+  .readout .k{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint)}
+  .readout .v{font-family:var(--display); font-weight:600; font-size:1.02rem; margin-top:3px}
+
+  /* memory trick */
+  .trick{background:linear-gradient(180deg,#fff,#FFFDF4); border:1px dashed var(--amber);
+    border-radius:14px; padding:14px 18px; font-size:1.02rem}
+  .trick b{color:var(--amber)}
+
+  /* reference card */
+  .ref{display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius); overflow:hidden;
+    border:1px solid var(--grid-strong)}
+  @media(max-width:600px){.ref{grid-template-columns:1fr}}
+  .ref .cell{padding:18px 20px; background:#fff; border-top:1px solid var(--grid); border-right:1px solid var(--grid)}
+  .ref .cell h4{font-family:var(--display); font-weight:700; margin:0 0 4px; color:var(--accent); font-size:1.05rem;
+    display:flex; align-items:center; gap:8px}
+  .ref .cell p{margin:0; font-size:.96rem; color:var(--ink-soft)}
+  .ref .cell .pin{font-size:.85rem; color:var(--ink-faint); margin-top:6px; font-style:italic}
+
+  /* comparison strip */
+  .compare{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  @media(max-width:720px){.compare{grid-template-columns:1fr}}
+  .cmp{border-radius:14px; padding:14px; text-align:center; border:1px solid var(--grid-strong); background:#fff}
+  .cmp .ttl{font-family:var(--display); font-weight:700; font-size:1.05rem}
+  .cmp .sub{font-size:.86rem; color:var(--ink-soft); margin-bottom:8px}
+  .cmp.neg .ttl{color:var(--tail)} .cmp.pos .ttl{color:var(--mode)}
+
+  /* ---------- activities ---------- */
+  .filterbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:6px 0 22px}
+  .filterbar .lbl{font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint)}
+  .chip{font-family:var(--display); font-weight:600; font-size:.86rem; cursor:pointer; border-radius:999px;
+    padding:7px 15px; border:1.5px solid var(--grid-strong); background:#fff; color:var(--ink-soft);
+    display:inline-flex; align-items:center; gap:8px; transition:.15s}
+  .chip .lt{width:11px;height:11px;border-radius:50%}
+  .chip[data-f="all"] .lt{background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+  .chip[data-f="green"] .lt{background:var(--green)}
+  .chip[data-f="amber"] .lt{background:var(--amber)}
+  .chip[data-f="red"] .lt{background:var(--red)}
+  .chip.on{color:var(--ink); border-color:var(--ink); box-shadow:var(--shadow)}
+
+  .activity{border-radius:var(--radius); border:1px solid var(--grid-strong); background:#fff;
+    box-shadow:var(--shadow); padding:0; overflow:hidden; margin-bottom:18px}
+  .activity.hide{display:none}
+  .activity .head{padding:16px 22px; display:flex; align-items:center; gap:12px; color:#fff}
+  .activity .head .tier{font-family:var(--display); font-weight:700; font-size:1.15rem; letter-spacing:.2px}
+  .activity .head .tag{margin-left:auto; font-family:var(--mono); font-size:.72rem; letter-spacing:.1em;
+    text-transform:uppercase; background:rgba(255,255,255,.22); padding:5px 10px; border-radius:999px}
+  .activity[data-tier="green"] .head{background:var(--green)}
+  .activity[data-tier="amber"] .head{background:var(--amber)}
+  .activity[data-tier="red"] .head{background:var(--red)}
+  .activity .body{padding:20px 22px}
+  .activity[data-tier="green"] .body{background:var(--green-bg)}
+  .activity[data-tier="amber"] .body{background:var(--amber-bg)}
+  .activity[data-tier="red"] .body{background:var(--red-bg)}
+  .activity .body > *{background:transparent}
+  .scenario{background:#fff; border-radius:12px; padding:16px 18px; border:1px solid rgba(0,0,0,.05)}
+  .scenario + .scenario{margin-top:14px}
+  .scenario h4{font-family:var(--display); font-weight:700; margin:0 0 8px; font-size:1.05rem}
+  .qlist{margin:0; padding-left:1.25em} .qlist li{margin:3px 0}
+  .datalist{font-family:var(--mono); font-weight:700; font-size:1.05rem; background:var(--paper);
+    border-radius:8px; padding:8px 12px; display:inline-block; margin:6px 0; color:var(--ink)}
+  .star{color:var(--amber); font-weight:800}
+
+  .answer{margin-top:14px; border-radius:12px; border:1px solid var(--grid-strong); background:#fff;
+    overflow:hidden; max-height:0; opacity:0; transition:max-height .35s ease, opacity .25s ease}
+  .answer.open{max-height:1200px; opacity:1}
+  .answer .inner{padding:14px 18px}
+  .answer h5{font-family:var(--display); font-weight:700; margin:0 0 6px; color:var(--green);
+    font-size:.95rem; display:flex; align-items:center; gap:8px}
+  .activity[data-tier="amber"] .answer h5{color:var(--amber)}
+  .activity[data-tier="red"] .answer h5{color:var(--red)}
+  .answer ul{margin:.2em 0; padding-left:1.2em} .answer li{margin:2px 0; font-size:.96rem}
+
+  /* teacher note */
+  .teacher-note{background:#FFFBEA; border:1px solid #F2E2A6; border-radius:12px;
+    padding:12px 16px; margin-top:16px; font-size:.93rem; color:#6b5d18}
+  .teacher-note b{font-family:var(--display); color:#8a6d00}
+  .teacher-note .pill{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+    background:#8a6d00; color:#fff; padding:3px 8px; border-radius:999px; margin-right:8px; vertical-align:1px}
+
+  /* reflection */
+  .reflect{display:grid; gap:10px}
+  .rrow{background:#fff; border:1px solid var(--grid-strong); border-radius:12px; padding:12px 16px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .rrow .txt{flex:1 1 220px; font-weight:600}
+  .rate{display:inline-flex; gap:6px}
+  .rate button{font-family:var(--display); font-weight:600; font-size:.8rem; border:1.5px solid var(--grid-strong);
+    background:#fff; color:var(--ink-soft); border-radius:999px; padding:5px 12px; cursor:pointer}
+  .rate button.got.on{background:var(--green); border-color:var(--green); color:#fff}
+  .rate button.near.on{background:var(--amber); border-color:var(--amber); color:#fff}
+  .rate button.help.on{background:var(--red); border-color:var(--red); color:#fff}
+  .talk{margin-top:18px; background:var(--ink); color:#fff; border-radius:var(--radius); padding:18px 22px}
+  .talk b{color:#FFD24A; font-family:var(--display)}
+
+  footer{padding:34px 0 60px; color:var(--ink-faint); font-size:.85rem; text-align:center}
+  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:6px}
+
+  /* svg chart bits */
+  .chart{width:100%; height:auto; display:block}
+  .bar-rect{transition:height .6s cubic-bezier(.2,.7,.3,1), y .6s cubic-bezier(.2,.7,.3,1), fill .3s}
+  .tail-path{transition:opacity .4s .2s; opacity:0}
+  .tail-path.show{opacity:1}
+  @media (prefers-reduced-motion: reduce){
+    .bar-rect, .tail-path{transition:none}
+    html{scroll-behavior:auto}
+  }
+  :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
+</style>
+</head>
+<body class="teacher">
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><span class="glyph"><i></i><i></i><i></i></span> Mode &amp; Data Shape</div>
+    <nav class="jump">
+      <a href="#part1">Mode</a>
+      <a href="#reference">Quick reference</a>
+      <a href="#part2">Shape &amp; skew</a>
+      <a href="#explorer">Explorer</a>
+      <a href="#activities">Activities</a>
+      <a href="#reflect">Reflection</a>
+    </nav>
+    <button class="tview" id="tview" aria-pressed="true">
+      <span class="dot"></span><span id="tviewlabel">Teacher notes: on</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="wrap hero">
+  <div class="eyebrow">Grade 5 Mathematics · Statistics</div>
+  <h1>The <span class="pink">mode</span> &amp; the <span class="blue">shape</span> of data</h1>
+  <span class="walt"><b>WALT:</b>&nbsp; identify and interpret the shape of data distributions.</span>
+
+  <div class="hero-grid">
+    <div>
+      <p class="lead" style="margin-top:22px">Two connected big ideas. The <b>mode</b> tells us <i>where</i> the peak of the data is. The <b>shape</b> tells us whether that peak sits in the middle — or leans to one side. Click, toggle, and reveal your way through both.</p>
+      <div class="btnrow">
+        <a class="btn" href="#part1">Start with the mode</a>
+        <a class="btn ghost" href="#explorer">Jump to the explorer</a>
+      </div>
+    </div>
+    <div class="hero-chart">
+      <div class="cap">Favourite sport · who picked what?</div>
+      <svg id="heroChart" class="chart" viewBox="0 0 360 220" role="img" aria-label="Column graph of favourite sports with soccer as the tallest bar"></svg>
+    </div>
+  </div>
+</div>
+
+<!-- LEARNING INTENTIONS -->
+<section id="intent" class="wrap">
+  <div class="part-tag">Success criteria · I can…</div>
+  <h2>What we’re aiming for</h2>
+  <div class="card">
+    <div class="reflect" id="iCanList"></div>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Read together.</b> Green criteria are covered in Part 1 (Mode), the orange one builds on it, and the red criterion is Part 2 (distribution shape). The two parts connect — the mode is the peak; the shape tells us if that peak is centred or lopsided.</div>
+  </div>
+</section>
+
+<!-- PART 1 -->
+<section id="part1" class="wrap">
+  <div class="part-tag">Part 1 of 2</div>
+  <h2>The mode</h2>
+  <p class="lead">The value that appears <b>most often</b> in a data set — the most popular value, like the tallest bar on a column graph.</p>
+
+  <div class="card define" style="margin-bottom:18px">
+    <b>Mode</b> = the value that appears most frequently. <span style="color:var(--ink-soft)">“Mode” rhymes with “most” — a handy way to remember.</span>
+  </div>
+
+  <!-- interactive counter -->
+  <div class="card counter">
+    <h3>Find the mode — tap a number</h3>
+    <p class="hint">Tap any value to light up every time it appears and count it. Then reveal the mode.</p>
+    <div class="digits" id="digits1" aria-label="Number list: 3 7 3 9 3 5 7 3 2 7"></div>
+    <div class="tallybar" id="tally1"><span style="color:var(--ink-faint);font-weight:400">Tap a number to start counting…</span></div>
+    <div class="verdict" id="verdict1"></div>
+    <div class="btnrow">
+      <button class="btn sm" id="reveal1">Reveal the mode</button>
+      <button class="btn ghost sm" id="reset1">Clear</button>
+    </div>
+    <div class="card" style="box-shadow:none;border:0;background:var(--paper);margin-top:16px;padding:16px">
+      <h3 style="font-size:1.05rem">How to find the mode</h3>
+      <ol class="steps">
+        <li>Count how many times each value appears (tally as you go).</li>
+        <li>The value with the highest count is the mode.</li>
+        <li>If two values tie for most — you have <span class="keyword">two modes</span>.</li>
+      </ol>
+    </div>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Work it together.</b> Ask students to tally before revealing. Encourage crossing out / tally marks as they count.</div>
+  </div>
+
+  <div class="two" style="margin-top:18px">
+    <!-- mode from graph -->
+    <div class="card">
+      <h3>Mode from a graph</h3>
+      <p style="color:var(--ink-soft);margin-top:0">On a column graph the mode is simply the <b>tallest bar</b> — no need to count every data point.</p>
+      <svg id="sportChart" class="chart" viewBox="0 0 360 230" role="img" aria-label="Favourite sport column graph"></svg>
+      <div class="btnrow">
+        <button class="btn sm" id="highlightSport">Highlight the mode</button>
+      </div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Ask: “Which sport should the school buy more equipment for, to match what most students enjoy?” Soccer = 14, the tallest bar.</div>
+    </div>
+
+    <!-- bimodal -->
+    <div class="card">
+      <h3>Can there be more than one mode?</h3>
+      <p style="color:var(--ink-soft);margin-top:0">Yes! When two values tie for most frequent, the data is <span class="keyword">bimodal</span> — two peaks.</p>
+      <div class="datalist">2&nbsp; 5&nbsp; 5&nbsp; 7&nbsp; 8&nbsp; 5&nbsp; 2&nbsp; 9&nbsp; 2&nbsp; 6</div>
+      <svg id="bimodalChart" class="chart" viewBox="0 0 360 200" role="img" aria-label="Frequency graph showing two equal peaks at 2 and 5"></svg>
+      <div class="btnrow">
+        <button class="btn sm" id="highlightBimodal">Show both peaks</button>
+      </div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Both 2 and 5 appear 3 times → two modes. Real example: survey students <i>and</i> teachers about age → two peaks.</div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENCE -->
+<section id="reference" class="wrap">
+  <div class="part-tag">Self-learning · keep this handy</div>
+  <h2>Mode quick reference</h2>
+  <p class="lead">Flipped-classroom learners: skim this, then head to the activities. Everyone else can return here any time.</p>
+  <div class="ref">
+    <div class="cell">
+      <h4>📖 Definition</h4>
+      <p>The mode is the value that appears most often.</p>
+      <p class="pin">“Mode” rhymes with “most”.</p>
+    </div>
+    <div class="cell">
+      <h4>🔢 In a list</h4>
+      <p>Count how many times each value appears. The highest count wins.</p>
+    </div>
+    <div class="cell">
+      <h4>📊 In a graph</h4>
+      <p>Look for the tallest bar (or bars). Its category is the mode.</p>
+    </div>
+    <div class="cell">
+      <h4>⛰️ Bimodal</h4>
+      <p>If two values tie for most frequent, there are two modes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PART 2 -->
+<section id="part2" class="wrap">
+  <div class="part-tag">Part 2 of 2</div>
+  <h2>Distribution shape &amp; skewness</h2>
+  <p class="lead">A distribution shows <b>how</b> data is spread — where most values cluster, and whether the data leans to one side. The peak is the mode; the <b style="color:var(--tail)">tail</b> tells us the direction of the skew.</p>
+
+  <div class="two">
+    <div class="card">
+      <h3 style="color:var(--mode)">➡️ Positively skewed</h3>
+      <p style="color:var(--ink-soft);margin-top:0">Peak on the <b>left</b>, tail stretches <b>right</b>. Most values are low; a few large ones drag the tail out.</p>
+      <ul class="qlist" style="font-size:.96rem">
+        <li><b>Mode:</b> 0–1 hours (tallest bar, far left)</li>
+        <li><b>Real life:</b> most students watch little TV; a few watch a lot</li>
+      </ul>
+      <div class="trick"><b>Tip:</b> “Positive” → tail points to the <b>positive</b> (right) end.</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--tail)">⬅️ Negatively skewed</h3>
+      <p style="color:var(--ink-soft);margin-top:0">Peak on the <b>right</b>, tail stretches <b>left</b>. Most values are high; a few low ones drag the tail out.</p>
+      <ul class="qlist" style="font-size:.96rem">
+        <li><b>Mode:</b> 12–13 points (tallest bar, far right)</li>
+        <li><b>Real life:</b> most students aced an easy quiz; a few struggled</li>
+      </ul>
+      <div class="trick"><b>Tip:</b> “Negative” → tail points to the lower (left) end.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPLORER (signature) -->
+<section id="explorer" class="wrap">
+  <div class="part-tag">Signature tool</div>
+  <h2>Distribution explorer</h2>
+  <p class="lead">Switch the shape and watch the bars rise, the mode light up, and the tail draw itself. Say it aloud with the class.</p>
+  <div class="card">
+    <div class="seg" role="tablist" aria-label="Choose a distribution shape">
+      <button data-shape="sym" class="on" role="tab" aria-selected="true">Symmetric</button>
+      <button data-shape="pos" role="tab" aria-selected="false">Positively skewed</button>
+      <button data-shape="neg" role="tab" aria-selected="false">Negatively skewed</button>
+    </div>
+    <svg id="explorerChart" class="chart" viewBox="0 0 700 330" role="img" aria-label="Interactive distribution graph"></svg>
+    <div class="explorer-read">
+      <div class="readout"><div class="k">Shape</div><div class="v" id="exShape">Symmetric (normal)</div></div>
+      <div class="readout"><div class="k">Peak / mode</div><div class="v" id="exPeak">In the centre</div></div>
+      <div class="readout"><div class="k">Tail points</div><div class="v" id="exTail">Balanced — no tail</div></div>
+      <div class="readout"><div class="k">Real-life example</div><div class="v" id="exReal">Heights in a class</div></div>
+    </div>
+    <div class="teacher-note"><span class="pill">Teacher</span><b>Key reference.</b> Students confuse the directions. The skew is named after where the <b>tail</b> goes, not the peak. Chant: “Positively skewed — tail to the right. Negatively skewed — tail to the left.”</div>
+  </div>
+
+  <!-- comparison strip -->
+  <h3 style="margin:26px 0 12px">Quick comparison — how to spot it</h3>
+  <div class="compare">
+    <div class="cmp neg"><div class="ttl">Negatively skewed</div><div class="sub">Peak right · tail ← left</div>
+      <svg class="chart mini" viewBox="0 0 220 120" data-mini="neg" role="img" aria-label="Negatively skewed mini graph"></svg></div>
+    <div class="cmp"><div class="ttl">Symmetric</div><div class="sub">Peak centre · balanced</div>
+      <svg class="chart mini" viewBox="0 0 220 120" data-mini="sym" role="img" aria-label="Symmetric mini graph"></svg></div>
+    <div class="cmp pos"><div class="ttl">Positively skewed</div><div class="sub">Peak left · tail → right</div>
+      <svg class="chart mini" viewBox="0 0 220 120" data-mini="pos" role="img" aria-label="Positively skewed mini graph"></svg></div>
+  </div>
+</section>
+
+<!-- ACTIVITIES -->
+<section id="activities" class="wrap">
+  <div class="part-tag">Differentiated practice</div>
+  <h2>Activities</h2>
+  <p class="lead">Filter to the tier you need. Green is fully scaffolded, amber builds confidence, red is an extended challenge. Answers are hidden — reveal when you’re ready.</p>
+
+  <div class="filterbar">
+    <span class="lbl">Show tier:</span>
+    <button class="chip on" data-f="all"><span class="lt"></span>All</button>
+    <button class="chip" data-f="green"><span class="lt"></span>Green</button>
+    <button class="chip" data-f="amber"><span class="lt"></span>Amber</button>
+    <button class="chip" data-f="red"><span class="lt"></span>Red</button>
+  </div>
+
+  <!-- GREEN -->
+  <div class="activity" data-tier="green">
+    <div class="head"><span class="tier">🟢 Green</span> Getting started <span class="tag">Scaffolded · use the reference</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>Part A — Mode from a list</h4>
+        <p style="margin:0 0 6px">What is the mode of each list? Write it and circle it in the list.</p>
+        <div class="datalist">1.&nbsp; 4, 7, 4, 9, 4, 2, 7</div><br>
+        <div class="datalist">2.&nbsp; 11, 15, 11, 20, 15, 11, 9</div><br>
+        <div class="datalist">3.&nbsp; 3, 3, 5, 6, 5, 8, 3, 5</div>
+      </div>
+      <div class="scenario">
+        <h4>Part B — Mode from a graph</h4>
+        <p style="margin:0 0 8px">What is the mode? How can you tell just by looking?</p>
+        <svg id="greenChart" class="chart" viewBox="0 0 360 200" role="img" aria-label="Books read per day column graph"></svg>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansGreen">Reveal answers</button></div>
+      <div class="answer" id="ansGreen"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>Part A:</b> (1) mode = 4 &nbsp;·&nbsp; (2) mode = 11 &nbsp;·&nbsp; (3) modes = 3 and 5 (bimodal)</li>
+          <li><b>Part B:</b> Tuesday and Wednesday are both modes (each = 9) — a bimodal graph. We know because they are the two tallest, equal bars.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Part B leads naturally into discussing bimodal data — two equal tallest bars.</div>
+    </div>
+  </div>
+
+  <!-- AMBER -->
+  <div class="activity" data-tier="amber">
+    <div class="head"><span class="tier">🟠 Amber</span> Building confidence <span class="tag">Mode + shape together</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>Scenario 1 — Spelling test scores</h4>
+        <svg id="amberChart" class="chart" viewBox="0 0 360 200" role="img" aria-label="Spelling test score distribution"></svg>
+        <ol class="qlist">
+          <li>What is the mode score range?</li>
+          <li>Is this positively skewed, negatively skewed, or symmetric?</li>
+          <li>What does the shape tell us about how students performed?</li>
+        </ol>
+      </div>
+      <div class="scenario">
+        <h4>Scenario 2 — Pocket money ($)</h4>
+        <div class="datalist">5, 5, 5, 5, 10, 10, 15, 20, 30, 50</div>
+        <ol class="qlist">
+          <li>What is the mode?</li>
+          <li>What is the range? (max − min)</li>
+          <li>If you drew a column graph, which way would the tail stretch?</li>
+          <li>Is this positively or negatively skewed?</li>
+          <li>Why might a few students receive $50? What does that tell us?</li>
+        </ol>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansAmber">Reveal answers</button></div>
+      <div class="answer" id="ansAmber"><div class="inner">
+        <h5>✓ Answers</h5>
+        <ul>
+          <li><b>Scenario 1:</b> (a) 9–10 &nbsp;·&nbsp; (b) negatively skewed &nbsp;·&nbsp; (c) most students scored well; only a few got low scores.</li>
+          <li><b>Scenario 2:</b> (a) $5 &nbsp;·&nbsp; (b) $45 &nbsp;·&nbsp; (c) right &nbsp;·&nbsp; (d) positively skewed &nbsp;·&nbsp; (e) open discussion — those few are outliers / high earners pulling the tail out to the right.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Great chance to connect to real-world data and the idea of outliers stretching a tail.</div>
+    </div>
+  </div>
+
+  <!-- RED -->
+  <div class="activity" data-tier="red">
+    <div class="head"><span class="tier">🔴 Red</span> Extended challenge <span class="tag">Reason deeply · full independence</span></div>
+    <div class="body">
+      <div class="scenario">
+        <h4>Problem 1 — Two classes, two distributions</h4>
+        <div class="datalist">Class A: 2, 2, 2, 4, 5, 6, 7, 8, 9, 10</div><br>
+        <div class="datalist">Class B: 2, 4, 5, 6, 7, 8, 9, 10, 10, 10</div>
+        <ol class="qlist">
+          <li>What is the mode of Class A? Of Class B?</li>
+          <li>Which class has positively skewed data? Which has negatively skewed data?</li>
+          <li>Which class performed better overall? Use the distribution shape as evidence.</li>
+        </ol>
+      </div>
+      <div class="scenario">
+        <h4>Problem 2 — Design your own data set</h4>
+        <p style="margin:0">Create a data set of 10 values that is <b>positively skewed</b> and has a <b>mode of 3</b>. Write the values, sketch the graph, and explain why it is positively skewed.</p>
+        <p style="margin:10px 0 0"><span class="star">★ Extension:</span> Think of a real-life situation where you’d expect <b>negatively</b> skewed data. Explain why the data skews that way, and what the mode would represent in that context.</p>
+      </div>
+      <div class="btnrow"><button class="btn sm reveal" data-target="ansRed">Reveal answers</button></div>
+      <div class="answer" id="ansRed"><div class="inner">
+        <h5>✓ Answers &amp; guidance</h5>
+        <ul>
+          <li><b>Problem 1:</b> Class A mode = 2 (positively skewed — most scored low). Class B mode = 10 (negatively skewed — most scored high). <b>Class B performed better</b>: its scores cluster at the high end, so the bulk of students did well.</li>
+          <li><b>Problem 2:</b> Open-ended. One example: 3, 3, 3, 3, 3, 4, 5, 7, 10, 15 — peak (mode 3) on the left, tail of larger values stretching right.</li>
+          <li><b>Extension:</b> Accept any reasoned example — e.g. driving-test scores when most people pass; age at retirement; an easy quiz. The mode represents the most common outcome in that context.</li>
+        </ul>
+      </div></div>
+      <div class="teacher-note"><span class="pill">Teacher</span>Look for evidence-based reasoning that links the <i>shape</i> to performance, not just the mode value.</div>
+    </div>
+  </div>
+</section>
+
+<!-- REFLECTION -->
+<section id="reflect" class="wrap">
+  <div class="part-tag">Reflection · how did you go?</div>
+  <h2>Check yourself</h2>
+  <div class="card">
+    <div class="reflect" id="reflectList"></div>
+    <div class="talk"><b>Talk to your partner:</b> give an example of positively skewed data from real life — and say where the mode would be.</div>
+    <div class="teacher-note"><span class="pill">Teacher</span>Exit check. For anyone still unsure: the <b>name</b> tells you the <b>tail</b> direction. Collect books / whiteboards.</div>
+  </div>
+</section>
+
+<footer class="wrap">
+  Grade 5 Mathematics · Mode &amp; the shape of data distributions
+  <div class="curric">Aligned to Victorian Curriculum 2.0 · Statistics</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const el = (n, a) => { const e=document.createElementNS(SVGNS,n); if(a) for(const k in a) e.setAttribute(k,a[k]); return e; };
+
+  /* ---------- reusable bar chart ----------
+     opts: pad, maxVal(optional), barColor, labelEvery(1), showVals(bool),
+     highlight:[indices] -> mode color, tail:'left'|'right'|null, rise(bool) */
+  function drawBars(svg, data, opts){
+    opts = opts || {};
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const vb = svg.getAttribute('viewBox').split(' ').map(Number);
+    const W = vb[2], H = vb[3];
+    const padL = opts.padL!=null?opts.padL:14, padR = opts.padR!=null?opts.padR:14;
+    const padT = opts.padT!=null?opts.padT:18, padB = opts.padB!=null?opts.padB:34;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const maxVal = opts.maxVal || Math.max.apply(null, data.map(d=>d.value));
+    const n = data.length;
+    const gap = opts.gap!=null?opts.gap:0.28;            // fraction of slot
+    const slot = plotW / n;
+    const bw = slot * (1-gap);
+    const baseY = padT + plotH;
+    const hi = new Set(opts.highlight||[]);
+
+    // light gridlines
+    const lines = opts.gridLines!=null?opts.gridLines:4;
+    for(let i=0;i<=lines;i++){
+      const y = padT + plotH*(i/lines);
+      svg.appendChild(el('line',{x1:padL,y1:y,x2:padL+plotW,y2:y,stroke:'#EAEFF7','stroke-width':1}));
+    }
+    // baseline
+    svg.appendChild(el('line',{x1:padL,y1:baseY,x2:padL+plotW,y2:baseY,stroke:'#CFDAEC','stroke-width':1.5}));
+
+    data.forEach((d,i)=>{
+      const fullH = Math.max(2, plotH * (d.value/maxVal));
+      const x = padL + slot*i + (slot-bw)/2;
+      const color = hi.has(i) ? 'var(--mode)' : (opts.barColor||'var(--bar)');
+      const r = el('rect',{x:x, width:bw, rx:4, fill:color, class:'bar-rect'});
+      if(opts.rise && !reduce){
+        r.setAttribute('y', baseY-2); r.setAttribute('height', 2);
+        svg.appendChild(r);
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          r.setAttribute('y', baseY-fullH); r.setAttribute('height', fullH);
+        }));
+      } else {
+        r.setAttribute('y', baseY-fullH); r.setAttribute('height', fullH);
+        svg.appendChild(r);
+      }
+      // value label on highlighted bars
+      if(opts.showVals && (hi.has(i) || opts.showVals==='all')){
+        const t = el('text',{x:x+bw/2,y:baseY-fullH-5,'text-anchor':'middle','font-family':'Space Mono, monospace','font-size':opts.valSize||11,'font-weight':700,fill: hi.has(i)?'var(--mode)':'var(--ink-soft)'});
+        t.textContent = d.value; svg.appendChild(t);
+      }
+      // x label
+      if(d.label!=null){
+        const t = el('text',{x:x+bw/2,y:baseY+15,'text-anchor':'middle','font-family':'Nunito, sans-serif','font-size':opts.labSize||11,'font-weight':700,fill: hi.has(i)?'var(--mode)':'var(--ink-soft)'});
+        t.textContent = d.label; svg.appendChild(t);
+      }
+    });
+
+    // tail arrow
+    if(opts.tail){
+      const y = padT + plotH*0.30;
+      const dir = opts.tail==='right';
+      const x1 = dir ? padL+plotW*0.42 : padL+plotW*0.58;
+      const x2 = dir ? padL+plotW*0.98 : padL+plotW*0.02;
+      const path = el('path',{class:'tail-path','stroke':'var(--tail)','stroke-width':3,'fill':'none','stroke-linecap':'round',
+        d:`M ${x1} ${y} L ${x2} ${y}`});
+      svg.appendChild(path);
+      // arrowhead
+      const ah = dir
+        ? `M ${x2} ${y} l -10 -6 M ${x2} ${y} l -10 6`
+        : `M ${x2} ${y} l 10 -6 M ${x2} ${y} l 10 6`;
+      const head = el('path',{class:'tail-path','stroke':'var(--tail)','stroke-width':3,'fill':'none','stroke-linecap':'round',d:ah});
+      svg.appendChild(head);
+      const lab = el('text',{class:'tail-path',x:(x1+x2)/2,y:y-9,'text-anchor':'middle','font-family':'Fredoka, sans-serif','font-size':13,'font-weight':600,fill:'var(--tail)'});
+      lab.textContent='tail'; svg.appendChild(lab);
+      const reveal = ()=>{ svg.querySelectorAll('.tail-path').forEach(p=>p.classList.add('show')); };
+      if(reduce) reveal(); else requestAnimationFrame(()=>requestAnimationFrame(reveal));
+    }
+  }
+
+  /* ---------- HERO ---------- */
+  const sportData = [
+    {label:'Soccer',value:14},{label:'AFL',value:10},{label:'B.ball',value:8},
+    {label:'Netball',value:6},{label:'Swim',value:4}
+  ];
+  drawBars(document.getElementById('heroChart'), sportData,
+    {highlight:[0], barColor:'var(--bar)', showVals:true, maxVal:15, rise:true});
+
+  /* ---------- mode counter ---------- */
+  const list1 = [3,7,3,9,3,5,7,3,2,7];
+  const digitsEl = document.getElementById('digits1');
+  const tally1 = document.getElementById('tally1');
+  const verdict1 = document.getElementById('verdict1');
+  let selected1 = null;
+  function counts(arr){const m={};arr.forEach(v=>m[v]=(m[v]||0)+1);return m;}
+  const c1 = counts(list1);
+  list1.forEach((v,i)=>{
+    const b=document.createElement('button');
+    b.className='digit'; b.textContent=v; b.dataset.val=v; b.dataset.i=i;
+    b.setAttribute('aria-label','value '+v);
+    b.addEventListener('click',()=>selectVal(v));
+    digitsEl.appendChild(b);
+  });
+  function selectVal(v){
+    selected1 = v;
+    [...digitsEl.children].forEach(b=>{
+      b.classList.toggle('lit', +b.dataset.val===v);
+      b.classList.toggle('dim', +b.dataset.val!==v);
+    });
+    tally1.innerHTML = `<span class="tally">value <b>${v}</b></span><span class="tally">appears <b>${c1[v]}</b> ${c1[v]===1?'time':'times'}</span>`;
+    verdict1.textContent=''; verdict1.classList.remove('show');
+  }
+  document.getElementById('reveal1').addEventListener('click',()=>{
+    [...digitsEl.children].forEach(b=>{
+      const isMode = +b.dataset.val===3;
+      b.classList.toggle('lit',isMode);
+      b.classList.toggle('dim',!isMode);
+    });
+    tally1.innerHTML = `<span class="tally">value <b>3</b></span><span class="tally">appears <b>4</b> times — the most</span>`;
+    verdict1.textContent='The mode is 3  ·  it appears 4 times, more than any other value.';
+    verdict1.classList.add('show');
+  });
+  document.getElementById('reset1').addEventListener('click',()=>{
+    selected1=null;
+    [...digitsEl.children].forEach(b=>b.classList.remove('lit','dim'));
+    tally1.innerHTML='<span style="color:var(--ink-faint);font-weight:400">Tap a number to start counting…</span>';
+    verdict1.textContent=''; verdict1.classList.remove('show');
+  });
+
+  /* ---------- mode from graph (toggle highlight) ---------- */
+  const sportChart = document.getElementById('sportChart');
+  function renderSport(hi){
+    drawBars(sportChart, sportData, {highlight:hi?[0]:[], barColor:'var(--bar)', showVals:hi?true:false, maxVal:15, rise:true});
+  }
+  renderSport(false);
+  let sportHi=false;
+  document.getElementById('highlightSport').addEventListener('click',e=>{
+    sportHi=!sportHi; renderSport(sportHi);
+    e.target.textContent = sportHi ? 'Hide the mode' : 'Highlight the mode';
+  });
+
+  /* ---------- bimodal ---------- */
+  const biData=[{label:'2',value:3},{label:'5',value:3},{label:'6',value:1},{label:'7',value:1},{label:'8',value:1},{label:'9',value:1}];
+  const biChart=document.getElementById('bimodalChart');
+  function renderBi(hi){ drawBars(biChart, biData, {highlight:hi?[0,1]:[], barColor:'var(--bar)', showVals:hi?true:false, maxVal:4, rise:true}); }
+  renderBi(false);
+  let biHi=false;
+  document.getElementById('highlightBimodal').addEventListener('click',e=>{
+    biHi=!biHi; renderBi(biHi);
+    e.target.textContent = biHi ? 'Hide the peaks' : 'Show both peaks';
+  });
+
+  /* ---------- distribution explorer ---------- */
+  const shapes = {
+    sym:{
+      data:[1,3,6,9,11,9,6,3,1].map((v,i)=>({label:i+1,value:v})),
+      hi:[4], tail:null,
+      txt:{shape:'Symmetric (normal)',peak:'In the centre',tail:'Balanced — no tail',real:'Heights in a class'}
+    },
+    pos:{
+      data:[{label:'0–1',value:12},{label:'2–3',value:8},{label:'4–5',value:5},{label:'6–7',value:3},{label:'8–9',value:1},{label:'10+',value:1}],
+      hi:[0], tail:'right',
+      txt:{shape:'Positively skewed',peak:'On the left (0–1 hours)',tail:'Right → positive end',real:'Hours of TV watched'}
+    },
+    neg:{
+      data:[{label:'0–1',value:1},{label:'2–3',value:1},{label:'4–5',value:2},{label:'6–7',value:3},{label:'8–9',value:5},{label:'10–11',value:8},{label:'12–13',value:12}],
+      hi:[6], tail:'left',
+      txt:{shape:'Negatively skewed',peak:'On the right (12–13 points)',tail:'Left → lower end',real:'Scores on an easy quiz'}
+    }
+  };
+  const exChart=document.getElementById('explorerChart');
+  function renderExplorer(key){
+    const s=shapes[key];
+    drawBars(exChart, s.data, {highlight:s.hi, barColor:'var(--bar)', tail:s.tail, showVals:false, rise:true, padB:36, labSize:13});
+    document.getElementById('exShape').textContent=s.txt.shape;
+    document.getElementById('exPeak').textContent=s.txt.peak;
+    document.getElementById('exTail').textContent=s.txt.tail;
+    document.getElementById('exReal').textContent=s.txt.real;
+  }
+  renderExplorer('sym');
+  document.querySelectorAll('.seg button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.seg button').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-selected','false');});
+      btn.classList.add('on'); btn.setAttribute('aria-selected','true');
+      renderExplorer(btn.dataset.shape);
+    });
+  });
+
+  /* ---------- mini comparison charts ---------- */
+  const mini = {
+    neg:[1,2,4,7,11,9].map((v,i)=>({value:v})),
+    sym:[2,5,9,9,5,2].map((v,i)=>({value:v})),
+    pos:[11,9,7,4,2,1].map((v,i)=>({value:v}))
+  };
+  const miniHi = {neg:[4],sym:[2,3],pos:[0]};
+  document.querySelectorAll('.mini').forEach(svg=>{
+    const key=svg.dataset.mini;
+    drawBars(svg, mini[key], {highlight:miniHi[key], barColor:'var(--bar)', tail:(key==='pos'?'right':key==='neg'?'left':null), padB:10, padT:24, gridLines:0});
+  });
+
+  /* ---------- activity graphs ---------- */
+  drawBars(document.getElementById('greenChart'),
+    [{label:'Mon',value:5},{label:'Tue',value:9},{label:'Wed',value:9},{label:'Thu',value:6},{label:'Fri',value:4}],
+    {barColor:'var(--bar)', maxVal:10, rise:true});
+  drawBars(document.getElementById('amberChart'),
+    [{label:'0–2',value:1},{label:'3–4',value:1},{label:'5–6',value:2},{label:'7–8',value:4},{label:'9–10',value:7}],
+    {barColor:'var(--bar)', maxVal:8, rise:true});
+
+  /* ---------- reveal answers ---------- */
+  document.querySelectorAll('.reveal').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=document.getElementById(btn.dataset.target);
+      const open=t.classList.toggle('open');
+      btn.textContent = open ? 'Hide answers' : 'Reveal answers';
+    });
+  });
+
+  /* ---------- tier filter ---------- */
+  const chips=document.querySelectorAll('.chip');
+  chips.forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.forEach(c=>c.classList.remove('on'));
+      chip.classList.add('on');
+      const f=chip.dataset.f;
+      document.querySelectorAll('.activity').forEach(a=>{
+        const show = f==='all' || a.dataset.tier===f;
+        a.classList.toggle('hide', !show);
+      });
+    });
+  });
+
+  /* ---------- teacher notes toggle ---------- */
+  const tv=document.getElementById('tview'), lbl=document.getElementById('tviewlabel');
+  tv.addEventListener('click',()=>{
+    const studentMode=document.body.classList.toggle('students');
+    document.body.classList.toggle('teacher',!studentMode);
+    tv.setAttribute('aria-pressed', String(!studentMode));
+    lbl.textContent = studentMode ? 'Teacher notes: off' : 'Teacher notes: on';
+  });
+
+  /* ---------- success criteria & reflection lists ---------- */
+  const criteria=[
+    {t:'I can explain that the mode is the value that appears most often.',tier:'green'},
+    {t:'I can find the mode in a list of numbers.',tier:'green'},
+    {t:'I can find the mode in a range of graphs.',tier:'green'},
+    {t:'I understand that some data sets can have more than one mode (bimodal).',tier:'amber'},
+    {t:'I can describe a distribution as symmetric, positively skewed, or negatively skewed.',tier:'red'}
+  ];
+  const tierColor={green:'var(--green)',amber:'var(--amber)',red:'var(--red)'};
+  const iCan=document.getElementById('iCanList');
+  criteria.forEach(c=>{
+    const row=document.createElement('div'); row.className='rrow';
+    row.innerHTML=`<span style="width:12px;height:12px;border-radius:3px;background:${tierColor[c.tier]};flex:0 0 auto"></span><span class="txt">${c.t}</span>`;
+    iCan.appendChild(row);
+  });
+  const refl=document.getElementById('reflectList');
+  criteria.forEach((c,idx)=>{
+    const row=document.createElement('div'); row.className='rrow';
+    const txt=document.createElement('span'); txt.className='txt'; txt.textContent=c.t;
+    const rate=document.createElement('span'); rate.className='rate';
+    [['got','Got it'],['near','Nearly'],['help','Need help']].forEach(([k,label])=>{
+      const b=document.createElement('button'); b.className=k; b.textContent=label;
+      b.addEventListener('click',()=>{
+        rate.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+        b.classList.add('on');
+      });
+      rate.appendChild(b);
+    });
+    row.appendChild(txt); row.appendChild(rate); refl.appendChild(row);
+  });
+})();
+</script>
+</body>
+</html>
