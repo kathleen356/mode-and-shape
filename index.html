@@ -86,7 +86,7 @@
   .walt{display:inline-block; background:var(--ink); color:#fff; font-family:var(--display);
     font-weight:500; padding:10px 16px; border-radius:12px; margin-top:8px; font-size:1.02rem}
   .walt b{color:#FFD24A; font-weight:700}
-  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:30px; align-items:end; margin-top:26px}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:30px; align-items:start; margin-top:26px}
   @media(max-width:760px){.hero-grid{grid-template-columns:1fr}}
   .hero-chart{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
     box-shadow:var(--shadow); padding:14px 16px 8px}
@@ -105,7 +105,8 @@
   .card{background:var(--card); border:1px solid var(--grid-strong); border-radius:var(--radius);
     box-shadow:var(--shadow); padding:24px}
   .card + .card{margin-top:18px}
-  .two{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+  .two > .card{margin-top:0}
   @media(max-width:720px){.two{grid-template-columns:1fr}}
 
   .keyword{color:var(--mode); font-weight:800}
@@ -253,7 +254,14 @@
   .talk b{color:#FFD24A; font-family:var(--display)}
 
   footer{padding:34px 0 60px; color:var(--ink-faint); font-size:.85rem; text-align:center}
-  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); margin-top:6px}
+  .curric{font-family:var(--mono); font-size:.72rem; color:var(--ink-faint)}
+  .curric-link{font-family:var(--display); font-weight:700; font-size:.72rem; cursor:pointer;
+    padding:7px 16px; border-radius:999px; border:1.5px solid var(--grid-strong);
+    background:var(--card); color:var(--accent); transition:transform .1s, border-color .15s, color .15s}
+  .curric-link:hover{border-color:var(--accent); color:var(--accent)}
+  .curric-link:active{transform:translateY(1px)}
+
+  .eyebrow-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
 
   /* svg chart bits */
   .chart{width:100%; height:auto; display:block}
@@ -288,9 +296,11 @@
 
 <!-- HERO -->
 <div class="wrap hero">
-  <div class="eyebrow">Grade 5 Mathematics · Statistics</div>
-  <h1>The <span class="pink">mode</span> &amp; the <span class="blue">shape</span> of data</h1>
-  <span class="walt"><b>WALT:</b>&nbsp; identify and interpret the shape of data distributions.</span>
+  <div class="eyebrow-row">
+    <div class="eyebrow">Grade 5 Mathematics · Statistics</div>
+    <a class="curric-link" href="https://f10.vcaa.vic.edu.au/learning-areas/mathematics/curriculum#VC2M5ST01" target="_blank" rel="noopener">VC2M5ST01 · Victorian Curriculum 2.0 ↗</a>
+  </div>
+  <h1>5.3 <span class="pink">Mode</span> and <span class="blue">Shape</span> of Data</h1>
 
   <div class="hero-grid">
     <div>
